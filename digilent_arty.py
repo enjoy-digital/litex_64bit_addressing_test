@@ -186,18 +186,20 @@ if __name__ == "__main__":
 # or
 # ./test_SRAMAccess.py [--ident] [--access] [sram]
 
+# Note: you can use --bus-standard=[wishbone|axi-lite]
+
 # SRAM test.
 # ----------
 # ./digilent_arty.py --sdram-test --uart-name=crossover --with-uartbone --csr-csv=csr.csv --build --bus-address-width=64 --load
 # litex_server --uart --addr-width=64 --uart-port=/dev/ttyUSB1
 
 # Write at > 32bits adr
-# litex_client --write 0x400000000 0x12345678
+# litex_cli --write 0x400000000 0x12345678
 # read at > 32bits adr
-# litex_client --read  0x400000000
+# litex_cli --read  0x400000000
 # 0x400000000 : 0x12345678
 # read at < 32bits adr
-# litex_client --read  0x40000000
+# litex_cli --read  0x40000000
 # 0x40000000 : 0x12345678
 # with bios (< 32bits adr):
 # mem_read 0x40000000
