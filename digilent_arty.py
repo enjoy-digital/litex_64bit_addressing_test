@@ -110,7 +110,7 @@ class BaseSoC(SoCCore):
 
                 litedram_wb = wishbone.Interface(
                     data_width    = port.data_width,
-                    address_width = port.address_width,
+                    address_width = self.bus.address_width,
                     addressing    = "word")
                 self.submodules += wishbone.Converter(wb_sdram, litedram_wb)
 
@@ -118,7 +118,7 @@ class BaseSoC(SoCCore):
                 self.wishbone_bridge = LiteDRAMWishbone2Native(
                     wishbone     = litedram_wb,
                     port         = port,
-                    base_address = self.bus.regions["main_ram"].origin
+                    base_address = self.bus.regions["myram"].origin
                 )
 
         # SRAMs ------------------------------------------------------------------------------------
