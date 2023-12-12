@@ -187,6 +187,12 @@ def main():
     parser.add_target_argument("--sdram-test", action="store_true",   help="SRAM test.")
     args = parser.parse_args()
 
+    # Force default params for this test
+    args.bus_address_width = 64
+    args.with_uartbone     = True
+    args.uart_name         = "crossover"
+    args.soc_csv           = "csr.csv"
+
     soc = BaseSoC(
         sys_clk_freq  = args.sys_clk_freq,
         ddram_channel = int(args.ddram_channel, 0),
@@ -208,26 +214,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# ./sqrl_xcu1525.py --sdram-test --build --bus-address-width=64 --with-uartbone --uart-name crossover --csr-csv=csr.csv
-
-# litex_server --uart --addr-width=64 --uart-port=/dev/ttyUSB2
-
-# Read in common area (< 32bits adr):
-# Write at > 32bits adr
-# litex_cli --write 0x100000000 0x12345678
-# read at > 32bits adr
-# litex_cli --read  0x100000000
-# wx100000000 : 0x12345678
-
-# 0x40000000
-
-# read at < 32bits adr
-# litex_cli --read  0x40000000
-# 0x40000000 : 0x12345678
-# with bios (< 32bits adr):
-# mem_read 0x40000000
-# Memory dump:
-# 0x40000000  78 56 34 12                                      xV4.
-
-
