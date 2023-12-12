@@ -108,15 +108,9 @@ class BaseSoC(SoCCore):
                     addressing    = "word")
                 self.bus.add_slave(name="myram", slave=wb_sdram)
 
-                litedram_wb = wishbone.Interface(
-                    data_width    = port.data_width,
-                    address_width = self.bus.address_width,
-                    addressing    = "word")
-                self.submodules += wishbone.Converter(wb_sdram, litedram_wb)
-
                 # Wishbone Slave <--> LiteDRAM bridge.
                 self.wishbone_bridge = LiteDRAMWishbone2Native(
-                    wishbone     = litedram_wb,
+                    wishbone     = wb_sdram,
                     port         = port,
                     base_address = self.bus.regions["myram"].origin
                 )
