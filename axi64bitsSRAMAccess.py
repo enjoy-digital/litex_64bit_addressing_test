@@ -236,8 +236,10 @@ class Platform(SimPlatform):
 # SimSoC -------------------------------------------------------------------------------------------
 
 class SimSoC(SoCMini):
-    def __init__(self, addressing="byte", default_trace=1, bus_standard="axi-lite", sram_format="axi-lite"):
+    def __init__(self, default_trace=1, endpoint_bus_std="axi-lite"):
         # Parameters.
+        assert endpoint_bus_std in ["axi-lite", "wishbone"]
+
         sys_clk_freq = int(1e6)
 
         # Platform.
@@ -261,7 +263,8 @@ class SimSoC(SoCMini):
             size   = 0x100,
         )
 
-        if sram_format == "axi-lite":
+        if endpoint_bus_std == "axi-lite":
+            addressing = "byte"
             # AXI Packet writer.
             # -----------------------
             self.pkt_stream_h = AXIPacketStreamer(addressing, 0x400000000, 0x12345678, 32, 64, 0x100)
@@ -320,9 +323,7 @@ class SimSoC(SoCMini):
 
 def main():
     parser = argparse.ArgumentParser(description="Verilator test for 64bits addressing")
-    parser.add_argument("--addressing", default="word", help="Addressing mode (byte or word)")
-    parser.add_argument("--bus-standard", default="axi-lite", help="Select bus standard: wishbone, axi-lite. (default: axi-lite)")
-    parser.add_argument("--sram-format", default="axi_lite", help="Select SRAM bus format: wishbone, axi-lite. (default: axi-lite)")
+    parser.add_argument("--endpoint-bus-std", default="axi_lite", help="Select generators/checker bus format: wishbone, axi-lite. (default: axi-lite)")
     verilator_build_args(parser)
     args = parser.parse_args()
     verilator_build_kwargs = verilator_build_argdict(args)
@@ -330,9 +331,7 @@ def main():
 
     # Create SoC.
     soc = SimSoC(
-        addressing   = args.addressing,
-        bus_standard = args.bus_standard,
-        sram_format  = args.sram_format
+        endpoint_bus_std  = args.endpoint_bus_std
     )
     builder = Builder(soc)
     builder.build(sim_config=sim_config, **verilator_build_kwargs, run=1)
