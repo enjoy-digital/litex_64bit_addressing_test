@@ -151,6 +151,12 @@ def main():
     parser.add_target_argument("--sdram-test",   action="store_true",       help="SRAM test.")
     args = parser.parse_args()
 
+    # Force default params for this test
+    args.bus_address_width = 64
+    args.with_uartbone     = True
+    args.uart_name         = "crossover"
+    args.soc_csv           = "csr.csv"
+
     soc = BaseSoC(
         variant        = args.variant,
         toolchain      = args.toolchain,
@@ -174,34 +180,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# SRAM test.
-# ----------
-# ./digilent_arty.py --sram-test --uart-name=uartbone --csr-csv=csr.csv --build --bus-address-width=64 --load
-# litex_server --uart --addr-width=64 --uart-port=/dev/ttyUSB1
-# litex_cli --write 0x400020000 0x12345678
-# litex_cli --write 0x00020000 0xCAFEBEBE
-# litex_cli --read 0x000020000
-# litex_cli --read 0x400020000
-# or
-# ./test_SRAMAccess.py [--ident] [--access] [sram]
-
-# Note: you can use --bus-standard=[wishbone|axi-lite]
-
-# SRAM test.
-# ----------
-# ./digilent_arty.py --sdram-test --uart-name=crossover --with-uartbone --csr-csv=csr.csv --build --bus-address-width=64 --load
-# litex_server --uart --addr-width=64 --uart-port=/dev/ttyUSB1
-
-# Write at > 32bits adr
-# litex_cli --write 0x400000000 0x12345678
-# read at > 32bits adr
-# litex_cli --read  0x400000000
-# 0x400000000 : 0x12345678
-# read at < 32bits adr
-# litex_cli --read  0x40000000
-# 0x40000000 : 0x12345678
-# with bios (< 32bits adr):
-# mem_read 0x40000000
-# Memory dump:
-# 0x40000000  78 56 34 12                                      xV4.
